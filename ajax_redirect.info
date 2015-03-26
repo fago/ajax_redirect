@@ -1,0 +1,4 @@
+name = "Ajax redirect"
+description = "Redirects users based upon the results of an (uncached) ajax request."
+core = "7.x"
+php = "5.2.4"

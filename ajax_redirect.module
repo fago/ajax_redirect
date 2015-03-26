@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Main module file.
+ */
+
+/**
+ * Implement hook_ctools_plugin_directory().
+ */
+function ajax_redirect_ctools_plugin_directory($module, $plugin) {
+  return 'plugins/' . $plugin;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ajax_redirect_menu() {
+  $items['system/ajax_redirect'] = array(
+    'title' => 'AHAH callback',
+    'page callback' => 'ajax_redirect_ajax_callback',
+    'delivery callback' => 'ajax_deliver',
+    'access callback' => TRUE,
+    'theme callback' => 'ajax_base_page_theme',
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+
+}
+
+/**
+ * Menu callback.
+ */
+function ajax_redirect_ajax_callback() {
+  if (empty($_POST['url'])) {
+    return MENU_ACCESS_DENIED;
+  }
+  // Determine redirect URL.
+  $url = NULL;
+  $options = array();
+
+  $current_url = parse_url($_POST['url']);
+  drupal_alter('ajax_redirect_url', $url, $options, $current_url);
+
+  $commands = array();
+
+  if (isset($url)) {
+    ctools_include('ajax');
+    ctools_add_js('ajax-responder');
+    $commands[] = ctools_ajax_command_redirect($url, 0, $options);
+  }
+  drupal_alter('ajax_redirect_commands', $commands, $current_url);
+
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands,
+  );
+}
