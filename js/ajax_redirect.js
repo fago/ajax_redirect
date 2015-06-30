@@ -8,7 +8,7 @@ Drupal.behaviors.ajax_redirect = {
 
       // Define a custom event and trigger it to init ajax.
       $(context).on('AjaxInit',function() {
-        $.cookie('ajax_redirect', '1', { expires: settings['ajax_redirect_expires'], path: '/' });
+        $.cookie('ajax_redirect', '1', { expires: parseInt(settings['ajax_redirect_expires']), path: '/' });
       });
 
       var ajax = new Drupal.ajax(null, $(context), {
