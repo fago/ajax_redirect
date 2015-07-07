@@ -6,12 +6,14 @@ Drupal.behaviors.ajax_redirect = {
     // Only do something if enabled and redirection was not applied yet.
     if (settings['ajax_redirect_callback'] && !$.cookie('ajax_redirect')) {
 
+      var element = $(document.body);
+
       // Define a custom event and trigger it to init ajax.
-      $(context).on('AjaxInit',function() {
+      $(element).on('AjaxInit',function() {
         $.cookie('ajax_redirect', '1', { expires: parseInt(settings['ajax_redirect_expires']), path: '/' });
       });
 
-      var ajax = new Drupal.ajax(null, $(context), {
+      var ajax = new Drupal.ajax(null, $(element), {
         url: settings['ajax_redirect_callback'],
         settings: {},
         prevent: false,
@@ -21,7 +23,7 @@ Drupal.behaviors.ajax_redirect = {
 
       ajax.options.data['url'] = window.location.href;
 
-      $(context).trigger('AjaxInit');
+      $(element).trigger('AjaxInit');
     }
   }
 };
