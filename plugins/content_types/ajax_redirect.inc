@@ -28,12 +28,19 @@ function ajax_redirect_ajax_redirect_content_type_render($subtype, $conf, $args)
       'js' => array(drupal_get_path('module', 'ajax_redirect') . '/js/ajax_redirect.js'),
     ),
   );
+  $ajax_redirect_settings = array(
+    'ajax_redirect_callback' => url('system/ajax_redirect'),
+    // By default, forget about redirection after 1 day.
+    'ajax_redirect_expires' => variable_get('ajax_redirect_expire', 1),
+    // Make application of the cookie to parts of the site possible by
+    // ignoring cookies not having the required value.
+    'ajax_redirect_required_cookie_value' => 1,
+  );
+  // Allow modules to alter the settings.
+  drupal_alter('ajax_redirect_settings', $ajax_redirect_settings);
+
   $block->content['#attached']['js'][] = array(
-    'data' => array(
-      'ajax_redirect_callback' => url('system/ajax_redirect'),
-      // By default, forget about redirection after 1 day.
-      'ajax_redirect_expires' => variable_get('ajax_redirect_expire', 1),
-    ),
+    'data' => $ajax_redirect_settings,
     'type' => 'setting'
   );
   return $block;

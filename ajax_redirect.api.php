@@ -39,3 +39,20 @@ function hook_ajax_redirect_commands_alter(&$commands, array $current_url) {
     unset($commands[0]);
   }
 }
+
+/**
+ * Alter ajax redirect JS settings.
+ *
+ * @param array $settings
+ *   All Drupal JS settings forwarded to ajax redirect javascript. Interesting
+ *   setting values are:
+ *     - ajax_redirect_required_cookie_value: The required cookie value for the
+ *     current page. Cookies not having the given value will be ignored and
+ *     redirection triggered. If a cookie is written, the given value is used.
+ *     The value defaults to 1.
+ */
+function hook_ajax_redirect_settings_alter(&$settings) {
+  if (drupal_is_front_page()) {
+    $settings['ajax_redirect_required_cookie_value'] = 'front';
+  }
+}
