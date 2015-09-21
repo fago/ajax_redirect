@@ -12,11 +12,14 @@ Drupal.behaviors.ajax_redirect = {
 
       // Define a custom event and trigger it to init ajax.
       $(element).on('AjaxInit',function() {
+      });
+
+      function writeCookie() {
         $.cookie('ajax_redirect', settings['ajax_redirect_required_cookie_value'], {
           expires: parseInt(settings['ajax_redirect_expires']),
           path: '/'
         });
-      });
+      }
 
       var ajax = new Drupal.ajax(null, $(element), {
         url: settings['ajax_redirect_callback'],
@@ -27,6 +30,15 @@ Drupal.behaviors.ajax_redirect = {
       });
 
       ajax.options.data['url'] = window.location.href;
+      ajax.options.complete = function (response, status) {
+        // Write cookie in any case, then invoke regular error handling.
+        writeCookie();
+
+        ajax.ajaxing = false;
+        if (status == 'error' || status == 'parsererror') {
+          return ajax.error(response, ajax.url);
+        }
+      };
 
       $(element).trigger('AjaxInit');
     }
